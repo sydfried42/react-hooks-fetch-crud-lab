@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 
-function QuestionItem({ question }) {
+function QuestionItem({ question, /*key, questions, setQuestions,*/ handleDelete }) {
   const { id, prompt, answers, correctIndex } = question;
 
   const options = answers.map((answer, index) => (
@@ -9,17 +9,35 @@ function QuestionItem({ question }) {
     </option>
   ));
 
+  const [corIndex, setCorIndex] = useState(correctIndex)
+
+  function handleChangeAnswer() {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type" : "application/json"
+      },
+      body: JSON.stringify({
+        correctIndex: corIndex,
+      }), 
+    })
+    .then((res)=>res.json())
+    .then((data)=>setCorIndex(data.correctIndex))
+  }
+
   return (
     <li>
       <h4>Question {id}</h4>
       <h5>Prompt: {prompt}</h5>
       <label>
         Correct Answer:
-        <select defaultValue={correctIndex}>{options}</select>
+        <select onChange={(e) => handleChangeAnswer(setCorIndex(e.target.value))} value={corIndex}>{options}</select>
       </label>
-      <button>Delete Question</button>
+      <button onClick={() => handleDelete(question)}>Delete Question</button>
     </li>
   );
 }
 
 export default QuestionItem;
+
+
