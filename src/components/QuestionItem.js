@@ -11,14 +11,15 @@ function QuestionItem({ question, /*key, questions, setQuestions,*/ handleDelete
 
   const [corIndex, setCorIndex] = useState(correctIndex)
 
-  function handleChangeAnswer() {
+  function handleChangeAnswer(e) {
+    // setCorIndex(e.target.value)
     fetch(`http://localhost:4000/questions/${id}`, {
       method: "PATCH",
       headers: {
         "content-type" : "application/json"
       },
       body: JSON.stringify({
-        correctIndex: corIndex,
+        correctIndex: e.target.value,
       }), 
     })
     .then((res)=>res.json())
@@ -31,7 +32,7 @@ function QuestionItem({ question, /*key, questions, setQuestions,*/ handleDelete
       <h5>Prompt: {prompt}</h5>
       <label>
         Correct Answer:
-        <select onChange={(e) => handleChangeAnswer(setCorIndex(e.target.value))} value={corIndex}>{options}</select>
+        <select onChange={handleChangeAnswer} value={corIndex}>{options}</select>
       </label>
       <button onClick={() => handleDelete(question)}>Delete Question</button>
     </li>
